@@ -1,4 +1,5 @@
 __pycache__/
 .venv/
 .vscode/
+attempts
 joke.mp3

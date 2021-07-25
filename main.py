@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-# from discord_slash import SlashCommand, SlashContext
-# from discord_slash.utils.manage_commands import create_choice, create_option
+from discord_slash import SlashCommand, SlashContext
+from discord_slash.utils.manage_commands import create_choice, create_option
 import asyncio
 import time
 import requests
@@ -10,17 +10,28 @@ from sound import joke_to_sound_file
 client = discord.Client()
 bot_token = "***REMOVED***" # Bot secret token https://discord.com/developers/applications
 
+#           EscuadronPZON           GAMBLING
+guild_ids=[265806519583506432, 494520437603172362]
+
 bot = commands.Bot(command_prefix='/')
+slash = SlashCommand(bot, sync_commands=False)
 
 # icanhazdadjoke.com api definitions
 dadjoke_url = "https://icanhazdadjoke.com/"
 headers = {'Accept': 'application/json', 'User-Agent': 'Api tests (sergicastro2001@gmail.com)'}
 
+@slash.slash(
+    name="ping",
+    description="Ping QuackBot",
+    guild_ids=guild_ids
+)
+async def _ping(ctx:SlashContext):
+    await ctx.send("Pong!")
 
 @bot.event
 async def on_ready():
     print("Bot is ready!")
-    print('We have logged in as {0}'.format(client))
+    # print('We have logged in as {0.user}'.format(client))
 
 @bot.command()
 async def joke(ctx):
@@ -29,11 +40,10 @@ async def joke(ctx):
     await ctx.send("{}".format(joke["joke"]))
     return joke["joke"]
 
-@bot.command()
-async def ping(ctx):
-    user_id = ctx.message.author.id
-    await ctx.send("<@%s> Pong!" % user_id)
-
+# @bot.command()
+# async def ping(ctx):
+#     user_id = ctx.message.author.id
+#     await ctx.send("<@%s> Pong!" % user_id)
 
 @bot.command()
 async def banoflife(ctx):
@@ -50,14 +60,19 @@ async def banoflife(ctx):
 async def join(ctx):
     channel = ctx.author.voice.channel
     await channel.connect()
-    await ctx.message.channel.send("Joined the voice channel {}".format(ctx.author.voice.channel))
+    #await ctx.send("Joined the voice channel {}".format(ctx.author.voice.channel))
 
 @bot.command(name="leavea")
 async def leave(ctx):
     await ctx.voice_client.disconnect()
 
-@bot.command()
-async def joke_tts(ctx):
+#@bot.command()
+@slash.slash(
+    name="joke_tts",
+    description="Tells you a dad joke into your ear.",
+    guild_ids=guild_ids
+)
+async def _joke_tts(ctx):
     guild = ctx.guild
     voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
 

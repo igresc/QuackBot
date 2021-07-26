@@ -2,11 +2,8 @@ import discord
 from discord.ext import commands
 from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_choice, create_option
-import asyncio
-import time
 import requests
-from requests.sessions import SessionRedirectMixin
-from sound import joke_to_sound_file
+from sound import string_to_sound_file
 
 # client = discord.Client()
 bot_token = "***REMOVED***" # Bot secret token https://discord.com/developers/applications
@@ -16,7 +13,7 @@ bot_token = "***REMOVED***" # Bot secret token https://discord.com/developers/ap
 guild_ids=[265806519583506432, 494520437603172362]
 
 bot = commands.Bot(command_prefix='/')
-slash = SlashCommand(bot, sync_commands=False)
+slash = SlashCommand(bot, sync_commands=True)
 
 # icanhazdadjoke.com api definitions
 dadjoke_url = "https://icanhazdadjoke.com/"
@@ -39,11 +36,12 @@ async def _ping(ctx:SlashContext):
     await ctx.send("Pong!")
 
 ##### Joke Text #####
-@slash.slash(
-    name="joke",
-    description="Tells a dad joke.",
-    guild_ids=guild_ids
-)
+# @slash.slash(
+#     name="joke",
+#     description="Tells a dad joke.",
+#     guild_ids=guild_ids
+# )
+@bot.command(name="joke")
 async def _joke(ctx):
     r = requests.get(url=dadjoke_url, headers=headers)
     joke = r.json()
@@ -54,6 +52,14 @@ async def _joke(ctx):
 @slash.slash(
     name="banoflife",
     description="Ban someone of life in a perfect grammar.",
+    # options=[
+    #            create_option(
+    #              name="User",
+    #              description="User to ban of life",
+    #              option_type=3,
+    #              required=False
+    #            )
+    #          ],
     guild_ids=guild_ids
 )
 async def banoflife(ctx):
@@ -99,8 +105,9 @@ async def _joke_tts(ctx):
         guild = ctx.guild
         voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
     joke_text = await _joke(ctx)
-    joke_to_sound_file(joke_text)
-    audio_source = discord.FFmpegPCMAudio('joke.mp3')
+    filename="data/joke.mp3"
+    string_to_sound_file(joke_text, filename)
+    audio_source = discord.FFmpegPCMAudio(filename)
 
     if not voice_client.is_playing():
         voice_client.play(audio_source, after=None)

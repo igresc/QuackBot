@@ -1,6 +1,6 @@
 from gtts import gTTS
 
-def joke_to_sound_file(joke_text):
+def string_to_sound_file(string_text, file_name):
     # Language in which you want to convert
     language = 'en'
 
@@ -8,8 +8,8 @@ def joke_to_sound_file(joke_text):
     # here we have marked slow=False. Which tells 
     # the module that the converted audio should 
     # have a high speed
-    myobj = gTTS(text=joke_text, lang=language, slow=False)
+    myobj = gTTS(text=string_text, lang=language, slow=False)
 
     # Saving the converted audio in a mp3 file named
     # welcome 
-    myobj.save('joke.mp3')
+    myobj.save(file_name)

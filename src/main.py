@@ -1,9 +1,12 @@
+from asyncio.tasks import sleep
 import discord
+from discord import voice_client
 from discord.ext import commands
 from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_choice, create_option
 import requests
 from sound import string_to_sound_file
+import os
 
 # client = discord.Client()
 bot_token = "***REMOVED***" # Bot secret token https://discord.com/developers/applications
@@ -13,7 +16,7 @@ bot_token = "***REMOVED***" # Bot secret token https://discord.com/developers/ap
 guild_ids=[265806519583506432, 494520437603172362]
 
 bot = commands.Bot(command_prefix='/')
-slash = SlashCommand(bot, sync_commands=True)
+slash = SlashCommand(bot, sync_commands=False)
 
 # icanhazdadjoke.com api definitions
 dadjoke_url = "https://icanhazdadjoke.com/"
@@ -78,17 +81,25 @@ async def join(ctx):
     try:
         channel = ctx.author.voice.channel
         try:
-            await channel.connect()
+            vc = await channel.connect()
+            source = discord.FFmpegPCMAudio("data/quack.mp3")
+            vc.play(source)
         except discord.errors.ClientException:
-            print("Error")
+            print("Bot already connected to a voice channel.")
     except AttributeError:
         await ctx.send("<@{}> You need to be in a voice channel".format(ctx.author.id))
-
+    
     #await ctx.send("Joined the voice channel {}".format(ctx.author.voice.channel))
 
 @bot.command(name="leavea")
 async def leave(ctx):
     await ctx.voice_client.disconnect()
+
+def rm_joke(filename):
+    try:
+        os.remove(filename)
+    except PermissionError as e:
+        print(e)
 
 ##### Joke TTS #####
 @slash.slash(
@@ -98,19 +109,33 @@ async def leave(ctx):
 )
 async def _joke_tts(ctx):
     guild = ctx.guild
+    await join(ctx)
     voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
 
-    if not voice_client:
-        await join(ctx)
-        guild = ctx.guild
-        voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
     joke_text = await _joke(ctx)
     filename="data/joke.mp3"
     string_to_sound_file(joke_text, filename)
     audio_source = discord.FFmpegPCMAudio(filename)
 
     if not voice_client.is_playing():
-        voice_client.play(audio_source, after=None)
+        voice_client.play(audio_source, after=lambda _: rm_joke(filename))
+
+##### Quack Voice #####
+@slash.slash(
+    name="quack",
+    description="Says Quack!",
+    guild_ids=guild_ids
+)
+async def _quack(ctx):
+    guild = ctx.guild
+    await join(ctx)
+    voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
+    filename="data/quack.mp3"
+    audio_source = discord.FFmpegPCMAudio(filename)
+    if not voice_client.is_playing():
+        voice_client.play(audio_source)
+
+    await ctx.send("Quack!")
 
 # @client.event
 # async def on_message(message):

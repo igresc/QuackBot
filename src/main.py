@@ -9,7 +9,7 @@ from sound import string_to_sound_file
 import os
 
 # client = discord.Client()
-bot_token = "***REMOVED***" # Bot secret token https://discord.com/developers/applications
+bot_token = os.environ["BOT_TOKEN"] # Bot secret token https://discord.com/developers/applications
 
 ##### Guild server Ids #####
 #            EscuadronPZON           GAMBLING

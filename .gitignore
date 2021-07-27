@@ -3,3 +3,4 @@ __pycache__/
 .vscode/
 attempts
 joke.mp3
+.env

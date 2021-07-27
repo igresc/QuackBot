@@ -1,0 +1,6 @@
+version: '3'
+services:
+    quackbot:
+        build: .
+        environment: 
+            BOT_TOKEN: "${BOT_TOKEN}"

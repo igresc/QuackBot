@@ -1,7 +1,7 @@
-version: '3'
+version: '3.9'
 services:
     quackbot:
         build: .
-        # image: igresc/quackbot:latest
+        image: igresc/quackbot:latest
         environment: 
             - BOT_TOKEN=${BOT_TOKEN}

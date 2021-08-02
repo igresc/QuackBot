@@ -1,12 +1,10 @@
-from asyncio.tasks import sleep
 import discord
-from discord import voice_client
 from discord.ext import commands
 from discord_slash import SlashCommand, SlashContext
-from discord_slash.utils.manage_commands import create_choice, create_option
-import requests
+from discord_slash.utils.manage_commands import create_option
+import requests, os
 from sound import string_to_sound_file
-import os
+import extra_functions as ext
 
 # client = discord.Client()
 bot_token = os.environ["BOT_TOKEN"] # Bot secret token https://discord.com/developers/applications
@@ -39,41 +37,29 @@ async def _ping(ctx:SlashContext):
     await ctx.send("Pong!")
 
 ##### Joke Text #####
-# @slash.slash(
-#     name="joke",
-#     description="Tells a dad joke.",
-#     guild_ids=guild_ids
-# )
 @bot.command(name="joke")
 async def _joke(ctx):
     r = requests.get(url=dadjoke_url, headers=headers)
-    joke = r.json()
-    await ctx.send("{}".format(joke["joke"]))
-    return joke["joke"]
+    joke = r.json()["joke"]
+    await ctx.send(joke)
+    return joke
 
 ##### Ban of life #####
 @slash.slash(
     name="banoflife",
     description="Ban someone of life in a perfect grammar.",
-    # options=[
-    #            create_option(
-    #              name="User",
-    #              description="User to ban of life",
-    #              option_type=3,
-    #              required=False
-    #            )
-    #          ],
+    options=[
+               create_option(
+                 name="user",
+                 description="User to ban of life",
+                 option_type=6,
+                 required=True
+               )
+             ],
     guild_ids=guild_ids
 )
-async def banoflife(ctx):
-    args = ctx.message.content.split(" ")
-    if len(args) >= 2:
-        await ctx.message.channel.send("{} asi do vaneado dela bida".format(args[1]))
-        print(args)
-    else:
-        userID = ctx.message.author.id
-        await ctx.message.channel.send("<@{}> asi do vaneado dela bida".format(userID), tts=True)
-        print(userID)
+async def _banoflife(ctx, user):
+    await ctx.send(f"<@{user.id}> asi do vaneado dela bida", tts=True)
 
 ##### Join authors voice Channel #####
 @bot.command(name="joina")
@@ -87,7 +73,7 @@ async def join(ctx):
         except discord.errors.ClientException:
             print("Bot already connected to a voice channel.")
     except AttributeError:
-        await ctx.send("<@{}> You need to be in a voice channel".format(ctx.author.id))
+        await ctx.send(f"<@{ctx.author.id}> You need to be in a voice channel")
     
     #await ctx.send("Joined the voice channel {}".format(ctx.author.voice.channel))
 
@@ -136,6 +122,16 @@ async def _quack(ctx):
         voice_client.play(audio_source)
 
     await ctx.send("Quack!")
+
+##### Duck GIF #####
+@slash.slash(
+    name="duck",
+    description="Gifs you a GIF",
+    guild_ids=guild_ids
+)
+async def duck(ctx):
+    gif = ext.tenor_get()
+    await ctx.send(gif)
 
 # @client.event
 # async def on_message(message):

@@ -4,3 +4,4 @@ __pycache__/
 attempts
 joke.mp3
 .env
+data/gifs.json

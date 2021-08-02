@@ -5,3 +5,4 @@ services:
         image: igresc/quackbot:latest
         environment: 
             - BOT_TOKEN=${BOT_TOKEN}
+            - TENOR_API_KEY=${TENOR_API_KEY}

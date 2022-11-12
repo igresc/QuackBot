@@ -42,6 +42,7 @@ pipeline {
             }
             steps {
                 container('docker') {
+                    sh 'ping google.es -c 4'
                     sh 'docker build . -t "${IMAGE_REPO}:${GIT_COMMIT}"'
                     sh 'docker login -u igresc -p $token_PSW'
                     sh 'docker push "${IMAGE_REPO}:${GIT_COMMIT}"'

@@ -5,6 +5,7 @@
 #    && apk add --no-cache python3 py-pip ffmpeg gcc musl-dev python3-dev py3-pynacl \
 #    && pip3 install --upgrade pip
 FROM igresc/python-ffmpeg:latest
+WORKDIR /app
 ENV DEBUG=True
 COPY req.txt /app/
 RUN pip install -r req.txt

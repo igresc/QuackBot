@@ -1,76 +1,89 @@
 pipeline {
-
-  environment {
-    PROJECT = "REPLACE_WITH_YOUR_PROJECT_ID"
-    APP_NAME = "gceme"
-    FE_SVC_NAME = "${APP_NAME}-frontend"
-    CLUSTER = "jenkins-cd"
-    CLUSTER_ZONE = "us-east1-d"
-    IMAGE_TAG = "europe-west1-docker.pkg.dev/w53-castrosoler/quackbot/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
-    JENKINS_CRED = "${PROJECT}"
-  }
- agent {
-   kubernetes {
-     label 'sample-app'
-     defaultContainer 'jnlp'
-     yaml """
-apiVersion: v1
-kind: Pod
-metadata:
-labels:
- component: ci
-spec:
- # Use service account that can deploy to all namespaces
- serviceAccountName: cd-jenkins
- containers:
- - name: gcloud
-   image: gcr.io/cloud-builders/gcloud
-   command:
-   - cat
-   tty: true
- - name: kubectl
-   image: gcr.io/cloud-builders/kubectl
-   command:
-   - cat
-   tty: true
-"""
-}
-  }
-  stages {
-    stage('Build and push image with Container Builder') {
-      steps {
-        container('gcloud') {
-          sh "gcloud auth configure-docker europe-west1-docker.pkg.dev"
-          sh "docker build -t ${IMAGE_TAG} ."
-          sh "PYTHONUNBUFFERED=1 gcloud builds submit -t ${IMAGE_TAG} ."
+    agent {
+        kubernetes {
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                    namespace: jenkins
+                spec:
+                    containers:
+                        - name: golang
+                          image: golang:1.18.2
+                          command:
+                              - sleep
+                          args:
+                              - 99d
+                        - name: docker
+                          image: "docker:dind"
+                          imagePullPolicy: Always
+                          command: ["dockerd"]
+                          securityContext:
+                              privileged: true
+            '''
+            defaultContainer 'golang'
         }
-      }
     }
-    // stage('Deploy Canary') {
-    //   // Canary branch
-    //   when { branch 'canary' }
-    //   steps {
-    //     container('kubectl') {
-    //       // Change deployed image in canary to the one we just built
-    //       sh("sed -i.bak 's#corelab/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/canary/*.yaml")
-    //       step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
-    //       step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/canary', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
-    //       sh("echo http://`kubectl --namespace=production get service/${FE_SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${FE_SVC_NAME}")
-    //     }
-    //   }
-    // }
-    stage('Deploy Production') {
-      // Production branch
-      when { branch 'master' }
-      steps{
-        container('kubectl') {
-        // Change deployed image in canary to the one we just built
-          sh("sed -i.bak 's#corelab/gceme:1.0.0#${IMAGE_TAG}#' ./k8s/production/*.yaml")
-          step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/services', credentialsId: env.JENKINS_CRED, verifyDeployments: false])
-          step([$class: 'KubernetesEngineBuilder', namespace:'production', projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/production', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
-          sh("echo http://`kubectl --namespace=production get service/${FE_SVC_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'` > ${FE_SVC_NAME}")
+    environment {
+        IMAGE_REPO = "igresc/quackbot"
+    }
+    stages {
+/*         stage('Build') {
+            steps {
+                sh '''
+                CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/hello-server .
+                go test -cover
+                '''
+            }
+        } */
+        stage("Build Docker Image") {
+            environment {
+                token = credentials("docker-hub")
+            }
+            steps {
+                container('docker') {
+                    sh 'docker build . -t "${IMAGE_REPO}:${GIT_COMMIT}"'
+                    sh 'docker login -u igresc -p $token_PSW'
+                    sh 'docker push "${IMAGE_REPO}:${GIT_COMMIT}"'
+                }
+            }
         }
-      }
+        stage("Deploy") {
+            environment {
+                GIT_CREDS = credentials('gitea-igresc')
+                GIT_REPO_EMAIL = 'sergicastro2001@gmail.com'
+                GIT_REPO_BRANCH = "main"
+                GIT_REPO_DIR = "Quackbot"
+            }
+            steps {
+                container('golang') {
+                        git branch: 'main', credentialsId: 'gitea-igresc', url: 'https://git.local.isabelsoler.es/igresc/GitOps-deployments.git'
+                        sh "pwd"
+                        sh "ls -la"
+                        //sh('git clone https://$GIT_CREDS_USR:$GIT_CREDS_PSW@git.local.isabelsoler.es/$GIT_CREDS_USR/GitOps-deployments.git')
+                        sh "git config --global user.email ${env.GIT_REPO_EMAIL}"
+                        // install yq
+                        sh "wget https://github.com/mikefarah/yq/releases/download/v4.9.6/yq_linux_amd64.tar.gz"
+                        sh "tar xvf yq_linux_amd64.tar.gz"
+                        sh "mv yq_linux_amd64 /usr/bin/yq"
+                        dir("test"){
+                            sh "git checkout ${env.GIT_REPO_BRANCH}"
+                            //install done
+                            sh '''#!/bin/bash
+                            echo $GIT_REPO_EMAIL
+                            echo GIT_COMMIT $GIT_COMMIT
+                            pwd
+                            ls -lth 
+                            yq eval '.spec.template.spec.containers[0].image = env(IMAGE_REPO) +":"+ env(GIT_COMMIT)' -i deployment.yaml
+                            cat deployment.yaml
+                            pwd
+                            git add deployment.yaml
+                            git commit -m 'Triggered Build'
+                            git push https://$GIT_CREDS_USR:$GIT_CREDS_PSW@git.local.isabelsoler.es/$GIT_CREDS_USR/GitOps-deployments.git
+                            '''
+                        }
+                }
+            }
+        }
     }
-  }
 }

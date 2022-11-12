@@ -1,8 +1,0 @@
-version: '3.9'
-services:
-    quackbot:
-        build: .
-        image: igresc/quackbot:latest
-        environment: 
-            - BOT_TOKEN=${BOT_TOKEN}
-            - TENOR_API_KEY=${TENOR_API_KEY}

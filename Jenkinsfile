@@ -52,12 +52,12 @@ pipeline {
             environment {
                 GIT_CREDS = credentials('gitea-igresc')
                 GIT_REPO_EMAIL = 'sergicastro2001@gmail.com'
-                GIT_REPO_BRANCH = "main"
+                GIT_REPO_BRANCH = "master"
                 GIT_REPO_DIR = "Quackbot"
             }
             steps {
                 container('golang') {
-                        git branch: 'main', credentialsId: 'gitea-igresc', url: 'https://git.local.isabelsoler.es/igresc/GitOps-deployments.git'
+                        git branch: 'master', credentialsId: 'gitea-igresc', url: 'https://git.local.isabelsoler.es/igresc/GitOps-deployments.git'
                         sh "pwd"
                         sh "ls -la"
                         //sh('git clone https://$GIT_CREDS_USR:$GIT_CREDS_PSW@git.local.isabelsoler.es/$GIT_CREDS_USR/GitOps-deployments.git')

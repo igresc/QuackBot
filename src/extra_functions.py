@@ -45,3 +45,8 @@ def rm_file(filename):
         os.remove(filename)
     except PermissionError as e:
         print(e)
+
+def get_rand_insult():
+    r = requests.get(url="https://raw.githubusercontent.com/EddieSharp/Insultos/master/diccionario.txt")
+    insult_list = r.text.splitlines()
+    print(insult_list)

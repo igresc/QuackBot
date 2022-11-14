@@ -121,5 +121,13 @@ async def _duck(ctx):
     gif = ext.tenor_get()
     await ctx.send(gif)
 
-    
+@slash.slash(
+    name="insult",
+    description="Haz que un pato insulte a alguien",
+    guild_ids=guild_ids
+)
+async def _insult(ctx):
+    insult = get_rand_insult()
+    await ctx.send(insult)
+
 bot.run(bot_token)

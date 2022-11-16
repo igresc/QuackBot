@@ -17,7 +17,7 @@ pipeline {
                         - name: docker
                           image: "docker:20.10.21-dind-alpine3.16"
                           imagePullPolicy: Always
-                          command: ["cat", "99d"]
+                          command: ["dockerd"]
                           env:
                             - name: "DOCKER_HOST"
                               value: "tcp://docker:2375"

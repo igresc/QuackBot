@@ -8,6 +8,7 @@ FROM igresc/python-ffmpeg:latest
 WORKDIR /app
 ENV DEBUG=True
 COPY req.txt /app/
+RUN apk add --no-cache libressl
 RUN pip install -r req.txt
 COPY data/ /app/data
 COPY src/ /app/

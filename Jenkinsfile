@@ -57,7 +57,7 @@ pipeline {
             environment {
                 GIT_CREDS = credentials('gitea-igresc')
                 GIT_REPO_EMAIL = 'sergicastro2001@gmail.com'
-                GIT_REPO_BRANCH = "master"
+                GIT_REPO_BRANCH = "main"
                 GIT_REPO_DIR = "Quackbot"
             }
             steps {

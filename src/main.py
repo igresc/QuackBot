@@ -143,6 +143,8 @@ async def _insult(ctx, user):
     description="Debug bot",
 )
 async def _debug(ctx):
-    await ctx.author.send("asdf123")
+    guilds = bot.guilds
+    await ctx.message.delete()
+    await ctx.author.send(f"Guilds: {guilds} \n")
 
 bot.run(bot_token)

@@ -144,7 +144,7 @@ async def _insult(ctx, user):
 )
 async def _debug(ctx):
     guilds = bot.guilds
-    await ctx.message.delete()
+    await ctx.send("Quackbot DM")
     await ctx.author.send(f"Guilds: {guilds} \n")
 
 bot.run(bot_token)

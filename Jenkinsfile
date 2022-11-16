@@ -42,8 +42,7 @@ pipeline {
             }
             steps {
                 container('docker') {
-                    sh 'ping pypi.org'
-                    sh 'curl -v https://pypi.org'
+                    sh 'echo $DOCKER_HOST'
                     sh 'docker build . -t "${IMAGE_REPO}:${GIT_COMMIT}"'
                     sh 'docker login -u igresc -p $token_PSW'
                     sh 'docker push "${IMAGE_REPO}:${GIT_COMMIT}"'

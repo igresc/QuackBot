@@ -138,4 +138,11 @@ async def _insult(ctx, user):
     insult = ext.get_rand_insult()
     await ctx.send(f"<@{user.id}> eres un/a {insult}")
 
+@slash.slash(
+    name="debug",
+    description="Debug bot",
+)
+async def _debug(ctx, user):
+    await user.send("asdf")
+
 bot.run(bot_token)

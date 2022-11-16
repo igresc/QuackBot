@@ -142,7 +142,7 @@ async def _insult(ctx, user):
     name="debug",
     description="Debug bot",
 )
-async def _debug(ctx, user):
+async def _debug(ctx, user: discord.User, *, message=None):
     await user.send("asdf")
 
 bot.run(bot_token)

@@ -62,7 +62,7 @@ pipeline {
             }
             steps {
                 container('golang') {
-                        git branch: 'master', credentialsId: 'gitea-igresc', url: 'https://git.local.isabelsoler.es/igresc/GitOps-deployments.git'
+                        git branch: 'main', credentialsId: 'gitea-igresc', url: 'https://git.local.isabelsoler.es/igresc/GitOps-deployments.git'
                         sh "pwd"
                         sh "ls -la"
                         //sh('git clone https://$GIT_CREDS_USR:$GIT_CREDS_PSW@git.local.isabelsoler.es/$GIT_CREDS_USR/GitOps-deployments.git')

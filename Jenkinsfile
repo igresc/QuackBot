@@ -80,7 +80,7 @@ pipeline {
                             pwd
                             ls -lth 
                             yq eval '.spec.template.spec.containers[0].image = env(IMAGE_REPO) +":"+ env(GIT_COMMIT)' -i deployment.yaml
-                            yq eval '.spec.template.spec.containers[0].env.[] | select(.name == "COMMIT_ID") | .value = "env(GIT_COMMIT)"' -i deployment.yaml
+                            yq eval '.spec.template.spec.containers[0].env.[0].value = env(GIT_COMMIT)' -i deployment.yaml
                             cat deployment.yaml
                             pwd
                             git add deployment.yaml

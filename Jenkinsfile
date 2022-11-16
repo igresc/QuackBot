@@ -15,7 +15,7 @@ pipeline {
                           args:
                               - 99d
                         - name: docker
-                          image: "docker:dind"
+                          image: "docker:stable-dind"
                           imagePullPolicy: Always
                           command: ["dockerd"]
                           securityContext:

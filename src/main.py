@@ -12,7 +12,7 @@ bot_token = os.environ["BOT_TOKEN"] # Bot secret token https://discord.com/devel
 guild_ids=[265806519583506432, 494520437603172362]
 
 bot = commands.Bot(command_prefix='/')
-slash = SlashCommand(bot, sync_commands=False)
+slash = SlashCommand(bot, sync_commands=True)
 
 
 ##### Event on_ready() to know when the bot is ready and functional #####
@@ -124,10 +124,18 @@ async def _duck(ctx):
 @slash.slash(
     name="insult",
     description="Haz que un pato insulte a alguien",
+    options=[
+               create_option(
+                 name="user",
+                 description="User to insult",
+                 option_type=6,
+                 required=True
+               )
+             ],
     guild_ids=guild_ids
 )
-async def _insult(ctx):
-    insult = get_rand_insult()
-    await ctx.send(insult)
+async def _insult(ctx, user):
+    insult = ext.get_rand_insult()
+    await ctx.send(f"<@{user.id}> eres un/a {insult}")
 
 bot.run(bot_token)

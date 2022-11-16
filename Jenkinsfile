@@ -42,6 +42,7 @@ pipeline {
             }
             steps {
                 container('docker') {
+                    sh "export DOCKER_HOST='tcp://docker:2375'"
                     sh 'echo $DOCKER_HOST'
                     sh 'docker build . -t "${IMAGE_REPO}:${GIT_COMMIT}"'
                     sh 'docker login -u igresc -p $token_PSW'

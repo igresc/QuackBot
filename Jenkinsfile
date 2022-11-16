@@ -15,7 +15,7 @@ pipeline {
                           args:
                               - 99d
                         - name: docker
-                          image: "docker:17.09-dind"
+                          image: "docker:20.10.21-dind-alpine3.16"
                           imagePullPolicy: Always
                           command: ["dockerd"]
                           securityContext:

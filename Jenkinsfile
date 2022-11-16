@@ -18,6 +18,9 @@ pipeline {
                           image: "docker:20.10.21-dind-alpine3.16"
                           imagePullPolicy: Always
                           command: ["dockerd"]
+                          env:
+                            - name: "DOCKER_HOST"
+                              value: "tcp://docker:2375"
                           securityContext:
                               privileged: true
             '''
@@ -42,8 +45,8 @@ pipeline {
             }
             steps {
                 container('docker') {
-                    sh "export DOCKER_HOST='tcp://docker:2375'"
                     sh 'echo $DOCKER_HOST'
+                    sh 'docker context ls'
                     sh 'docker build . -t "${IMAGE_REPO}:${GIT_COMMIT}"'
                     sh 'docker login -u igresc -p $token_PSW'
                     sh 'docker push "${IMAGE_REPO}:${GIT_COMMIT}"'

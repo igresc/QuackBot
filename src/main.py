@@ -143,6 +143,6 @@ async def _insult(ctx, user):
     description="Debug bot",
 )
 async def _debug(ctx):
-    ctx.message.author.send("asdf123")
+    ctx.author.send("asdf123")
 
 bot.run(bot_token)

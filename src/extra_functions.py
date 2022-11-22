@@ -2,17 +2,13 @@ import os, requests, random, json
 from gtts import gTTS
 
 def string_to_sound_file(string_text, file_name, lang="en"):
-    # Language in which you want to convert
-    language = lang
-
     # Passing the text and language to the engine, 
     # here we have marked slow=False. Which tells 
     # the module that the converted audio should 
     # have a high speed
-    myobj = gTTS(text=string_text, lang=language, slow=False)
+    myobj = gTTS(text=string_text, lang=lang, slow=False)
 
-    # Saving the converted audio in a mp3 file named
-    # welcome 
+    # Saving the converted audio in a mp3 file named "file_name"
     myobj.save(file_name)
 
 def tenor_get():

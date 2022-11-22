@@ -1,9 +1,9 @@
 import os, requests, random, json
 from gtts import gTTS
 
-def string_to_sound_file(string_text, file_name):
+def string_to_sound_file(string_text, file_name, lang="en"):
     # Language in which you want to convert
-    language = 'en'
+    language = lang
 
     # Passing the text and language to the engine, 
     # here we have marked slow=False. Which tells 

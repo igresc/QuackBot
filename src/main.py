@@ -135,8 +135,19 @@ async def _duck(ctx):
     guild_ids=guild_ids
 )
 async def _insult(ctx, user):
-    insult = ext.get_rand_insult()
-    await ctx.send(f"<@{user.id}> eres un/a {insult}")
+    insult_text = ext.get_rand_insult()
+    await join(ctx)
+    voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+
+    insult_text = f"<@{user.id}> eres un/a {insult_text}"
+    await ctx.send(insult_text)
+
+    filename="data/insult.mp3"
+    ext.string_to_sound_file(insult_text, filename)
+    audio_source = discord.FFmpegPCMAudio(filename)
+
+    if not voice_client.is_playing():
+        voice_client.play(audio_source, after=lambda _: ext.rm_file(filename))
 
 @slash.slash(
     name="debug",

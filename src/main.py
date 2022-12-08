@@ -144,6 +144,7 @@ async def _insult(ctx, user):
 
     filename="data/insult.mp3"
     ext.string_to_sound_file(f"{user.name} eres un/a {insult_text}", filename, lang="es")
+    print(f"{user.name} eres un/a {insult_text}")
     audio_source = discord.FFmpegPCMAudio(filename)
 
     if not voice_client.is_playing():

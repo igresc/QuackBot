@@ -139,8 +139,8 @@ async def _insult(ctx, user):
     await join(ctx)
     voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=ctx.guild)
 
-    insult_text = f"<@{user.id}> eres un/a {insult_text}"
-    await ctx.send(insult_text)
+    insult_frase = f"<@{user.id}> eres un/a {insult_text}"
+    await ctx.send(insult_frase)
 
     filename="data/insult.mp3"
     ext.string_to_sound_file(f"{user.name} eres un/a {insult_text}", filename, lang="es")

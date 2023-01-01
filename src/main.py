@@ -12,7 +12,7 @@ bot_token = os.environ["BOT_TOKEN"] # Bot secret token https://discord.com/devel
 guild_ids=[265806519583506432, 494520437603172362]
 
 bot = commands.Bot(command_prefix='/')
-slash = SlashCommand(bot, sync_commands=True)
+slash = SlashCommand(bot, sync_commands=False)
 
 
 ##### Event on_ready() to know when the bot is ready and functional #####

@@ -160,8 +160,21 @@ async def _debug(ctx):
     await ctx.author.send(f"Guilds: {guilds} \n")
 
 @bot.event
-async def user_join_vc(event):
-    print(event.content)
+async def on_voice_state_update(member, before, after):
+    if (member.name == "igresc"):
+        guilds = bot.guilds
+        channel = after.channel
+        try:
+            vc = await channel.connect()
+            source = discord.FFmpegPCMAudio("data/quack.mp3")
+            vc.play(source)
+        except discord.errors.ClientException:
+            print("Bot already connected to a voice channel.")
+        voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guilds)
+        filename="data/quack.mp3"
+        audio_source = discord.FFmpegPCMAudio(filename)
+        if not voice_client.is_playing():
+            voice_client.play(audio_source)
 
 
 bot.run(bot_token)

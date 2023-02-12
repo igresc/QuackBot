@@ -159,4 +159,9 @@ async def _debug(ctx):
     await ctx.send("Quackbot DM")
     await ctx.author.send(f"Guilds: {guilds} \n")
 
+@bot.event
+async def user_join_vc(event):
+    print(event.content)
+
+
 bot.run(bot_token)

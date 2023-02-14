@@ -158,7 +158,7 @@ async def _debug(ctx):
     guilds = bot.guilds
     await ctx.send("Quackbot DM")
     await ctx.author.send(f"Guilds: {guilds} \n")
-    await ctx.author.send(f"ctx: {ctx} \n")
+    await ctx.author.send(f"Bot VCs: {bot.voice_clients} \n")
 
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -177,6 +177,7 @@ async def on_voice_state_update(member, before, after):
             vc = await channel.connect()
         except discord.errors.ClientException:
             print("Bot already connected to a voice channel.")
+            vc.move_to(channel)
 
         if vc != None and not vc.is_playing():
             vc.play(source)

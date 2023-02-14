@@ -177,7 +177,8 @@ async def on_voice_state_update(member, before, after):
             vc = await channel.connect()
         except discord.errors.ClientException:
             print("Bot already connected to a voice channel.")
-            vc.move_to(channel)
+            if channel != vc.channel:
+                vc.move_to(channel)
 
         if vc != None and not vc.is_playing():
             vc.play(source)

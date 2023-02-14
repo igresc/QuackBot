@@ -158,20 +158,25 @@ async def _debug(ctx):
     guilds = bot.guilds
     await ctx.send("Quackbot DM")
     await ctx.author.send(f"Guilds: {guilds} \n")
+    await ctx.author.send(f"ctx: {ctx} \n")
 
 @bot.event
 async def on_voice_state_update(member, before, after):
     # if (member.name == "igresc" or member.name == "MazorcaPawah"):
     #     print(member.roles)
+    guilds = bot.guilds
+    try:
+        vc: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guilds)
+    except discord.errors.ClientException:
+        print("no bot in voice channel")
+
     if any(x for x in member.roles if x.id == 1075157644005884005):
-        guilds = bot.guilds
         channel = after.channel
         source = discord.FFmpegPCMAudio("data/quack.mp3")
         try:
             vc = await channel.connect()
         except discord.errors.ClientException:
             print("Bot already connected to a voice channel.")
-            vc: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guilds)
 
         if vc != None and not vc.is_playing():
             vc.play(source)

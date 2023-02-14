@@ -12,7 +12,7 @@ bot_token = os.environ["BOT_TOKEN"] # Bot secret token https://discord.com/devel
 guild_ids=[265806519583506432, 494520437603172362]
 
 bot = commands.Bot(command_prefix='/')
-slash = SlashCommand(bot, sync_commands=False)
+slash = SlashCommand(bot, sync_commands=True)
 
 
 ##### Event on_ready() to know when the bot is ready and functional #####
@@ -82,7 +82,7 @@ async def leave(ctx):
 
 ##### Joke TTS #####
 @slash.slash(
-    name="joke_tts",
+    name="dadjoke",
     description="Tells you a dad joke into your ear.",
     guild_ids=guild_ids
 )
@@ -183,6 +183,5 @@ async def on_voice_state_update(member, _, after):
 
     if not vc.is_playing():
         vc.play(audio_source)
-
 
 bot.run(bot_token)

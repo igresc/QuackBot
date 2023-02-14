@@ -161,7 +161,7 @@ async def _debug(ctx):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    if (member.name == "igresc"):
+    if (member.name == "igresc" or member.name == "MazorcaPawah"):
         guilds = bot.guilds
         channel = after.channel
         try:

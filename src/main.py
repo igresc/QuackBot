@@ -173,14 +173,17 @@ async def on_voice_state_update(member, before, after):
     if any(x for x in member.roles if x.id == 1075157644005884005):
         channel = after.channel
         source = discord.FFmpegPCMAudio("data/quack.mp3")
-        try:
-            vc = await channel.connect()
-        except discord.errors.ClientException:
-            print("Bot already connected to a voice channel.")
-            if channel != vc.channel:
-                vc.move_to(channel)
 
-        if vc != None and not vc.is_playing():
+        if vc == None:
+            try:
+                vc = await channel.connect()
+            except discord.errors.ClientException:
+                print("Bot already connected to a voice channel.")
+        
+        if channel != vc.channel:
+            vc.move_to(channel)
+
+        if not vc.is_playing():
             vc.play(source)
 
 

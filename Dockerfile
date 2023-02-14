@@ -11,5 +11,4 @@ COPY req.txt /app/
 RUN pip install -r req.txt
 COPY data/ /app/data
 COPY src/ /app/
-ENTRYPOINT ["python3"]
-CMD ["main.py"]
+CMD ["python3","-u","main.py"]

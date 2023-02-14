@@ -167,8 +167,8 @@ async def on_voice_state_update(member, before, after):
     guilds = bot.guilds
     try:
         vc: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guilds)
-    except discord.errors.ClientException:
-        print("no bot in voice channel")
+    except discord.errors.ClientException as e:
+        print("no bot in voice channel", e)
 
     if any(x for x in member.roles if x.id == 1075157644005884005):
         channel = after.channel
@@ -183,8 +183,9 @@ async def on_voice_state_update(member, before, after):
         if channel != vc.channel:
             vc.move_to(channel)
 
-        if not vc.is_playing():
-            vc.play(source)
+        # if not vc.is_playing():
+        #     vc.play(source)
+        vc.play(source)
 
 
 bot.run(bot_token)

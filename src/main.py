@@ -57,14 +57,19 @@ async def _banoflife(ctx, user):
 ##### Join authors voice Channel #####
 @bot.command(name="joina")
 async def join(ctx):
+    vc: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    source = discord.FFmpegPCMAudio("data/quack.mp3")
     try:
         channel = ctx.author.voice.channel
         try:
             vc = await channel.connect()
-            source = discord.FFmpegPCMAudio("data/quack.mp3")
             vc.play(source)
         except discord.errors.ClientException:
             print("Bot already connected to a voice channel.")
+            print("Moving to the new channel...")
+            await vc.move_to(channel)
+            vc.play(source)
+
     except AttributeError:
         await ctx.send(f"<@{ctx.author.id}> You need to be in a voice channel")
     
@@ -100,7 +105,7 @@ async def _joke_tts(ctx):
     description="Says Quack!",
     guild_ids=guild_ids
 )
-async def _quack(ctx):
+async def quack(ctx):
     guild = ctx.guild
     await join(ctx)
     voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
@@ -161,31 +166,23 @@ async def _debug(ctx):
     await ctx.author.send(f"Bot VCs: {bot.voice_clients} \n")
 
 @bot.event
-async def on_voice_state_update(member, before, after):
-    # if (member.name == "igresc" or member.name == "MazorcaPawah"):
-    #     print(member.roles)
-    guilds = bot.guilds
-    try:
-        vc: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guilds)
-    except discord.errors.ClientException as e:
-        print("no bot in voice channel", e)
-
+async def on_voice_state_update(member, _, after):
+    vc: discord.VoiceClient = discord.utils.get(bot.voice_clients)
+    filename="data/quack.mp3"
+    audio_source = discord.FFmpegPCMAudio(filename)
     if any(x for x in member.roles if x.id == 1075157644005884005):
+
         channel = after.channel
-        source = discord.FFmpegPCMAudio("data/quack.mp3")
 
-        if vc == None:
-            try:
-                vc = await channel.connect()
-            except discord.errors.ClientException as e:
-                print("Bot already connected to a voice channel.", e)
-        
-        if channel != vc.channel:
-            vc.move_to(channel)
+        try:
+            vc = await channel.connect()
+        except discord.errors.ClientException:
+            print("Bot already connected to a voice channel.")
+            print("Moving to the new channel...")
+            await vc.move_to(channel)
 
-        # if not vc.is_playing():
-        #     vc.play(source)
-        vc.play(source)
+    if not vc.is_playing():
+        vc.play(audio_source)
 
 
 bot.run(bot_token)

@@ -168,7 +168,6 @@ async def _debug(ctx):
 @bot.event
 async def on_voice_state_update(member, before, after):
     vc: discord.VoiceClient = discord.utils.get(bot.voice_clients)
-    print(vc)
     filename="data/quack.mp3"
     audio_source = discord.FFmpegOpusAudio(filename)
     if (before.channel != None) and (before.channel != after.channel):
@@ -179,8 +178,7 @@ async def on_voice_state_update(member, before, after):
             try:
                 vc = await channel.connect()
             except discord.errors.ClientException:
-                print("Bot already connected to a voice channel.")
-                print(vc.channel)
+                print(f"Bot already connected to voice channel: {vc.channel}")
                 print("Moving to the new channel...")
                 try:
                     await vc.move_to(channel)

@@ -170,7 +170,7 @@ async def on_voice_state_update(member, before, after):
     vc: discord.VoiceClient = discord.utils.get(bot.voice_clients)
     print(vc)
     filename="data/quack.mp3"
-    audio_source = discord.FFmpegPCMAudio(filename)
+    audio_source = discord.FFmpegOpusAudio(filename)
     if (before.channel != None) and (before.channel != after.channel):
         if any(x for x in member.roles if x.id == 1075157644005884005):
 

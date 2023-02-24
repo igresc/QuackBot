@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_option
-import requests, os
+import os
 import extra_functions as ext
 
 bot_token = os.environ["BOT_TOKEN"] # Bot secret token https://discord.com/developers/applications

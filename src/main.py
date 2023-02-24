@@ -175,7 +175,7 @@ async def on_voice_state_update(member, before, after):
 
     channel = after.channel
 
-    if (before.channel == None) or (vc != None):
+    if (before.channel == None):
         try:
             vc = await channel.connect()
         except discord.errors.ClientException as e:

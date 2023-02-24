@@ -184,7 +184,10 @@ async def on_voice_state_update(member, before, after):
                 print("Moving to the new channel...")
                 await vc.move_to(channel)
 
-            if not vc.is_playing():
-                vc.play(audio_source)
+            try:
+                if not vc.is_playing():
+                    vc.play(audio_source)
+            except any as e:
+                print(e)
 
 bot.run(bot_token)

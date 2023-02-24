@@ -167,7 +167,6 @@ async def _debug(ctx):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    vc: discord.VoiceClient = discord.utils.get(bot.voice_clients)
     filename="data/quack.mp3"
     audio_source = discord.FFmpegOpusAudio(filename)
     if not any(x for x in member.roles if x.id == 1075157644005884005):
@@ -181,13 +180,14 @@ async def on_voice_state_update(member, before, after):
         except discord.errors.ClientException as e:
             print(e)
     elif (before.channel != after.channel):
+        vc: discord.VoiceClient = discord.utils.get(bot.voice_clients)
 
-            print(f"Bot already connected to voice channel: {vc.channel}")
-            print("Moving to the new channel...")
-            try:
-                await vc.move_to(channel)
-            except any as e:
-                print(e)
+        print(f"Bot already connected to voice channel: {vc.channel}")
+        print("Moving to the new channel...")
+        try:
+            await vc.move_to(channel)
+        except any as e:
+            print(e)
 
     if not vc.is_playing():
         vc.play(audio_source)

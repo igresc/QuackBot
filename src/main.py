@@ -173,13 +173,14 @@ async def on_voice_state_update(member, before, after):
     if not any(x for x in member.roles if x.id == 1075157644005884005):
         return
 
+    channel = after.channel
+
     if (before.channel == None) or (vc != None):
         try:
             vc = await channel.connect()
         except discord.errors.ClientException as e:
             print(e)
     elif (before.channel != after.channel):
-            channel = after.channel
 
             print(f"Bot already connected to voice channel: {vc.channel}")
             print("Moving to the new channel...")

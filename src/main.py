@@ -182,7 +182,7 @@ async def on_voice_state_update(member, before, after):
     elif (after.channel == None):
         for x in bot.voice_clients:
             if(x.server == before.channel.server):
-                await vc.disconnect()
+                await x.disconnect()
     elif (before.channel != after.channel):
         vc: discord.VoiceClient = discord.utils.get(bot.voice_clients)
 

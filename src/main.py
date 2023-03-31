@@ -179,6 +179,8 @@ async def on_voice_state_update(member, before, after):
             vc = await channel.connect()
         except discord.errors.ClientException as e:
             print(e)
+    elif (after.channel == None):
+        await vc.disconnect()
     elif (before.channel != after.channel):
         vc: discord.VoiceClient = discord.utils.get(bot.voice_clients)
 

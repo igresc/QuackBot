@@ -179,6 +179,10 @@ async def on_voice_state_update(member, before, after):
             vc = await channel.connect()
         except discord.errors.ClientException as e:
             print(e)
+        
+        if not vc.is_playing():
+            vc.play(audio_source)
+
     elif (after.channel == None):
         for x in bot.voice_clients:
             if(x.server == before.channel.server):
@@ -193,8 +197,8 @@ async def on_voice_state_update(member, before, after):
         except any as e:
             print(e)
 
-    if not vc.is_playing():
-        vc.play(audio_source)
+        if not vc.is_playing():
+            vc.play(audio_source)
 
 
 bot.run(bot_token)

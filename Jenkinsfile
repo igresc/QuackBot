@@ -14,21 +14,19 @@ pipeline {
                               - sleep
                           args:
                               - 99d
+
                         - name: docker
-                          image: "docker:20.10.21-dind-alpine3.16"
-                          imagePullPolicy: Always
-                          command: ["dockerd"]
-                          env:
-                            - name: "DOCKER_HOST"
-                              value: "tcp://docker:2375"
-                          securityContext:
-                              privileged: true
+                            image: "docker:dind"
+                            imagePullPolicy: Always
+                            command: ["dockerd"]
+                            securityContext:
+                                privileged: true
             '''
             defaultContainer 'golang'
         }
     }
     environment {
-        IMAGE_REPO = "igresc/quackbot"
+        IMAGE_REPO = "git.local.isabelsoler.es/igresc/quackbot"
     }
     stages {
 /*         stage('Build') {
@@ -41,14 +39,12 @@ pipeline {
         } */
         stage("Build Docker Image") {
             environment {
-                token = credentials("docker-hub")
+                token = credentials("gitea-igresc")
             }
             steps {
                 container('docker') {
-                    sh 'echo $DOCKER_HOST'
-                    sh 'docker context ls'
                     sh 'docker build . -t "${IMAGE_REPO}:${GIT_COMMIT}"'
-                    sh 'docker login -u igresc -p $token_PSW'
+                    sh 'docker login git.local.isabelsoler.es -u igresc -p $token_PSW'
                     sh 'docker push "${IMAGE_REPO}:${GIT_COMMIT}"'
                 }
             }

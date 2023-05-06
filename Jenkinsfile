@@ -16,11 +16,11 @@ pipeline {
                               - 99d
 
                         - name: docker
-                            image: "docker:dind"
-                            imagePullPolicy: Always
-                            command: ["dockerd"]
-                            securityContext:
-                                privileged: true
+                          image: "docker:dind"
+                          imagePullPolicy: Always
+                          command: ["dockerd"]
+                          securityContext:
+                            privileged: true
             '''
             defaultContainer 'golang'
         }
